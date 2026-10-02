@@ -12,7 +12,6 @@ import {
   EyeOff,
   CheckCircle2,
   AlertCircle,
-  Sparkles,
   Database,
   ShieldCheck,
   Loader2,
@@ -132,36 +131,10 @@ export default function LoginPage() {
         setErrorMsg(err.message || "Ocorreu um erro na autenticação.");
       }
     } else {
-      // Modo Local / Demo (sem Supabase conectado ainda)
-      const demoUser = {
-        id: "usr-" + Date.now(),
-        name: fullName.trim() || (email ? email.split("@")[0] : "Leonardo Silva"),
-        email: email.trim() || "leonardo@fintech.com",
-        cpf: cpf.trim() || "123.456.789-09",
-      };
-      setUser(demoUser);
-
-      setTimeout(() => {
-        setSuccessMsg(
-          mode === "login"
-            ? "Autenticado no Modo Demonstração/Local! Redirecionando..."
-            : "Conta de demonstração criada com sucesso! Redirecionando..."
-        );
-        setTimeout(() => router.push("/"), 700);
-      }, 400);
+      setErrorMsg("Serviço de autenticação não inicializado. Verifique as configurações de ambiente.");
     }
 
     setLoading(false);
-  };
-
-  const handleDemoAccess = () => {
-    setUser({
-      id: "usr-demo",
-      name: "Leonardo Silva",
-      email: "leonardo@fintech.com",
-      cpf: "123.456.789-09",
-    });
-    router.push("/");
   };
 
   return (
@@ -170,14 +143,8 @@ export default function LoginPage() {
       <div className="max-w-md mx-auto w-full flex items-center justify-end">
         {/* Supabase status badge */}
         <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-neutral-100 dark:bg-neutral-900 border border-border text-[11px]">
-          <span
-            className={`w-2 h-2 rounded-full ${
-              isSupabaseConnected ? "bg-emerald-500 animate-pulse" : "bg-amber-500"
-            }`}
-          />
-          <span className="text-neutral-500">
-            {isSupabaseConnected ? "Supabase Conectado" : "Modo Local / Demo"}
-          </span>
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="text-neutral-500 font-medium">Supabase Conectado</span>
         </div>
       </div>
 
@@ -375,24 +342,6 @@ export default function LoginPage() {
             <ArrowRight className="w-4 h-4" />
           </button>
         </form>
-
-        {/* Divisor */}
-        <div className="relative flex items-center justify-center">
-          <div className="border-t border-border w-full" />
-          <span className="bg-card px-2 text-[11px] text-neutral-400 uppercase font-mono absolute">
-            ou
-          </span>
-        </div>
-
-        {/* Botão de Demonstração / Acesso Rápido */}
-        <button
-          type="button"
-          onClick={handleDemoAccess}
-          className="w-full py-2 px-3 border border-border hover:bg-neutral-50 dark:hover:bg-neutral-900 text-neutral-500 dark:text-neutral-400 hover:text-foreground rounded-lg transition-colors text-xs font-medium flex items-center justify-center gap-2"
-        >
-          <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-          <span>Continuar no Modo Local / Demonstração</span>
-        </button>
       </div>
 
       {/* Footer minimalista */}

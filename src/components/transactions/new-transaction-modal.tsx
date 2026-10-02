@@ -288,7 +288,7 @@ export function NewTransactionModal() {
       <CategoryManagerModal
         isOpen={isCategoryModalOpen}
         onClose={() => setIsCategoryModalOpen(false)}
-        initialType={type}
+        initialType={type === "transfer" ? "expense" : type}
         onSelectCreatedCategory={(newCat) => {
           setCategoryId(newCat.id);
         }}

@@ -277,44 +277,50 @@ export default function DashboardPage() {
               </div>
 
               <div className="space-y-2">
-                {accounts.map((acc) => {
-                  const isCard = acc.type === "credit_card";
-                  return (
-                    <div
-                      key={acc.id}
-                      className="p-3 rounded-lg border border-border/80 bg-neutral-50/50 dark:bg-neutral-900/50 flex items-center justify-between"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <div
-                          className="w-3 h-3 rounded-full"
-                          style={{ backgroundColor: acc.color || "#10b981" }}
-                        />
-                        <div>
-                          <div className="text-xs font-medium text-foreground">{acc.name}</div>
-                          <div className="text-[10px] text-neutral-400">
-                            {isCard
-                              ? `Fecha dia ${acc.closing_day} • Vence dia ${acc.due_day}`
-                              : acc.institution}
+                {accounts.length === 0 ? (
+                  <div className="p-4 text-center text-neutral-400 text-xs">
+                    Nenhuma conta cadastrada.
+                  </div>
+                ) : (
+                  accounts.map((acc) => {
+                    const isCard = acc.type === "credit_card";
+                    return (
+                      <div
+                        key={acc.id}
+                        className="p-3 rounded-lg border border-border/80 bg-neutral-50/50 dark:bg-neutral-900/50 flex items-center justify-between"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <div
+                            className="w-3 h-3 rounded-full"
+                            style={{ backgroundColor: acc.color || "#10b981" }}
+                          />
+                          <div>
+                            <div className="text-xs font-medium text-foreground">{acc.name}</div>
+                            <div className="text-[10px] text-neutral-400">
+                              {isCard
+                                ? `Fecha dia ${acc.closing_day} • Vence dia ${acc.due_day}`
+                                : acc.institution}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <div className="text-right">
-                        <div
-                          className={`font-mono text-xs font-semibold ${
-                            isCard ? "text-purple-500" : "text-foreground"
-                          }`}
-                        >
-                          {formatCurrency(acc.balance)}
-                        </div>
-                        {isCard && acc.available_limit !== undefined && (
-                          <div className="text-[10px] text-neutral-400">
-                            Disp: {formatCurrency(acc.available_limit)}
+                        <div className="text-right">
+                          <div
+                            className={`font-mono text-xs font-semibold ${
+                              isCard ? "text-purple-500" : "text-foreground"
+                            }`}
+                          >
+                            {formatCurrency(acc.balance)}
                           </div>
-                        )}
+                          {isCard && acc.available_limit !== undefined && (
+                            <div className="text-[10px] text-neutral-400">
+                              Disp: {formatCurrency(acc.available_limit)}
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })
+                )}
               </div>
             </div>
 
@@ -333,7 +339,12 @@ export default function DashboardPage() {
               </div>
 
               <div className="space-y-3">
-                {goals.map((goal) => {
+                {goals.length === 0 ? (
+                  <div className="p-4 text-center text-neutral-400 text-xs">
+                    Nenhuma meta cadastrada.
+                  </div>
+                ) : (
+                  goals.map((goal) => {
                   const percent = Math.min(
                     100,
                     Math.round((goal.current_amount / goal.target_amount) * 100)
@@ -369,7 +380,7 @@ export default function DashboardPage() {
                       </div>
                     </div>
                   );
-                })}
+                }))}
               </div>
             </div>
           </div>

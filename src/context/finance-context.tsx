@@ -2,21 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { Account, Category, Goal, Investment, Transaction, UserProfile } from "@/lib/types";
-import {
-  initialAccounts,
-  initialCategories,
-  initialGoals,
-  initialInvestments,
-  initialTransactions,
-} from "@/lib/mock-data";
 import { createClient } from "@/lib/supabase/client";
-
-const DEFAULT_USER: UserProfile = {
-  id: "usr-demo",
-  name: "Leonardo Silva",
-  email: "leonardo@fintech.com",
-  cpf: "123.456.789-09",
-};
 
 interface FinanceContextType {
   user: UserProfile | null;
@@ -47,11 +33,11 @@ const FinanceContext = createContext<FinanceContextType | undefined>(undefined);
 export function FinanceProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isAuthLoading, setIsAuthLoading] = useState<boolean>(true);
-  const [accounts, setAccounts] = useState<Account[]>(initialAccounts);
-  const [categories, setCategories] = useState<Category[]>(initialCategories);
-  const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
-  const [goals, setGoals] = useState<Goal[]>(initialGoals);
-  const [investments, setInvestments] = useState<Investment[]>(initialInvestments);
+  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [goals, setGoals] = useState<Goal[]>([]);
+  const [investments, setInvestments] = useState<Investment[]>([]);
   const [selectedMonth, setSelectedMonth] = useState<Date>(new Date(2026, 9, 1)); // Outubro 2026
   const [isSupabaseConnected, setIsSupabaseConnected] = useState<boolean>(false);
   const [isNewTxModalOpen, setIsNewTxModalOpen] = useState(false);
@@ -69,11 +55,11 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
         supabase.from("investments").select("*").eq("user_id", userId),
       ]);
 
-      if (accRes.data && accRes.data.length > 0) setAccounts(accRes.data as any);
-      if (catRes.data && catRes.data.length > 0) setCategories(catRes.data as any);
-      if (txRes.data && txRes.data.length > 0) setTransactions(txRes.data as any);
-      if (goalRes.data && goalRes.data.length > 0) setGoals(goalRes.data as any);
-      if (invRes.data && invRes.data.length > 0) setInvestments(invRes.data as any);
+      setAccounts(accRes.data && accRes.data.length > 0 ? (accRes.data as any) : []);
+      setCategories(catRes.data && catRes.data.length > 0 ? (catRes.data as any) : []);
+      setTransactions(txRes.data && txRes.data.length > 0 ? (txRes.data as any) : []);
+      setGoals(goalRes.data && goalRes.data.length > 0 ? (goalRes.data as any) : []);
+      setInvestments(invRes.data && invRes.data.length > 0 ? (invRes.data as any) : []);
     } catch (err) {
       console.error("Erro ao sincronizar dados com o Supabase:", err);
     }
@@ -177,7 +163,7 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
 
     // Sincronizar com o Supabase se logado
     const supabase = createClient();
-    if (supabase && user && !user.id.startsWith("usr-demo")) {
+    if (supabase && user) {
       supabase.from("transactions").insert({
         ...txData,
         user_id: user.id,
@@ -213,7 +199,7 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     } catch {}
 
     const supabase = createClient();
-    if (supabase && user && !user.id.startsWith("usr-demo")) {
+    if (supabase && user) {
       supabase.from("transactions").delete().eq("id", id).then(({ error }) => {
         if (error) console.error("Erro ao deletar transação no Supabase:", error);
       });
@@ -233,7 +219,7 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     } catch {}
 
     const supabase = createClient();
-    if (supabase && user && !user.id.startsWith("usr-demo")) {
+    if (supabase && user) {
       supabase.from("accounts").insert({
         ...accData,
         user_id: user.id,
@@ -256,7 +242,7 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     } catch {}
 
     const supabase = createClient();
-    if (supabase && user && !user.id.startsWith("usr-demo")) {
+    if (supabase && user) {
       supabase.from("goals").insert({
         ...goalData,
         user_id: user.id,
@@ -279,7 +265,7 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     } catch {}
 
     const supabase = createClient();
-    if (supabase && user && !user.id.startsWith("usr-demo")) {
+    if (supabase && user) {
       supabase.from("investments").insert({
         ...invData,
         user_id: user.id,
@@ -301,7 +287,7 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     } catch {}
 
     const supabase = createClient();
-    if (supabase && user && !user.id.startsWith("usr-demo")) {
+    if (supabase && user) {
       try {
         const { data, error } = await supabase.from("categories").insert({
           name: catData.name,
@@ -331,7 +317,7 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     } catch {}
 
     const supabase = createClient();
-    if (supabase && user && !user.id.startsWith("usr-demo")) {
+    if (supabase && user) {
       try {
         await supabase.from("categories").delete().eq("id", id);
       } catch (err) {
@@ -363,6 +349,20 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       }
     }
     handleSetUser(null);
+    setAccounts([]);
+    setTransactions([]);
+    setCategories([]);
+    setGoals([]);
+    setInvestments([]);
+    try {
+      localStorage.removeItem("fintech_user");
+      localStorage.removeItem("fintech_accounts");
+      localStorage.removeItem("fintech_transactions");
+      localStorage.removeItem("fintech_categories");
+      localStorage.removeItem("fintech_goals");
+      localStorage.removeItem("fintech_investments");
+      localStorage.setItem("fintech_logged_out", "true");
+    } catch {}
   };
 
   return (
