@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #fbfbfb;
+  --foreground: #111827;
+  --card: #ffffff;
+  --card-foreground: #111827;
+  --popover: #ffffff;
+  --popover-foreground: #111827;
+  --border: #e5e7eb;
+  --input: #e5e7eb;
+  --ring: #10b981;
+  --sidebar: #f8fafc;
+  --sidebar-border: #f1f5f9;
+}
+
+.dark {
+  --background: #090a0b;
+  --foreground: #f3f4f6;
+  --card: #121316;
+  --card-foreground: #f3f4f6;
+  --popover: #121316;
+  --popover-foreground: #f3f4f6;
+  --border: #23252a;
+  --input: #23252a;
+  --ring: #10b981;
+  --sidebar: #0e0f12;
+  --sidebar-border: #1a1c22;
+}
+
+html {
+  font-size: 17.6px; /* Escala correspondente exatamente ao zoom 110% desejado */
+  font-family: 'Tahoma', Geneva, Verdana, sans-serif !important;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: 'Tahoma', Geneva, Verdana, sans-serif !important;
+  background-color: var(--background);
+  color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Garante que botões, inputs, tabelas e tags usem estritamente Tahoma */
+*, *::before, *::after, input, button, select, textarea, optgroup, option {
+  font-family: 'Tahoma', Geneva, Verdana, sans-serif !important;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Custom scrollbars (minimal) */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(150, 150, 150, 0.2);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(150, 150, 150, 0.4);
+}
