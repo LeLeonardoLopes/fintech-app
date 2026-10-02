@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { Account, Category, Goal, Investment, Transaction, UserProfile } from "@/lib/types";
 import { createClient } from "@/lib/supabase/client";
+import { DEFAULT_CATEGORIES, DEFAULT_ACCOUNTS } from "@/lib/constants";
 
 interface FinanceContextType {
   user: UserProfile | null;
@@ -33,8 +34,8 @@ const FinanceContext = createContext<FinanceContextType | undefined>(undefined);
 export function FinanceProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isAuthLoading, setIsAuthLoading] = useState<boolean>(true);
-  const [accounts, setAccounts] = useState<Account[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [accounts, setAccounts] = useState<Account[]>(DEFAULT_ACCOUNTS);
+  const [categories, setCategories] = useState<Category[]>(DEFAULT_CATEGORIES);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [goals, setGoals] = useState<Goal[]>([]);
   const [investments, setInvestments] = useState<Investment[]>([]);
@@ -55,8 +56,18 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
         supabase.from("investments").select("*").eq("user_id", userId),
       ]);
 
-      setAccounts(accRes.data && accRes.data.length > 0 ? (accRes.data as any) : []);
-      setCategories(catRes.data && catRes.data.length > 0 ? (catRes.data as any) : []);
+      if (accRes.data && accRes.data.length > 0) {
+        setAccounts(accRes.data as any);
+      } else {
+        setAccounts(DEFAULT_ACCOUNTS);
+      }
+
+      if (catRes.data && catRes.data.length > 0) {
+        setCategories(catRes.data as any);
+      } else {
+        setCategories(DEFAULT_CATEGORIES);
+      }
+
       setTransactions(txRes.data && txRes.data.length > 0 ? (txRes.data as any) : []);
       setGoals(goalRes.data && goalRes.data.length > 0 ? (goalRes.data as any) : []);
       setInvestments(invRes.data && invRes.data.length > 0 ? (invRes.data as any) : []);
@@ -126,13 +137,23 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       }
 
       const savedCat = localStorage.getItem("fintech_categories");
-      if (savedCat) setCategories(JSON.parse(savedCat));
+      if (savedCat) {
+        try {
+          const parsed = JSON.parse(savedCat);
+          if (Array.isArray(parsed) && parsed.length > 0) setCategories(parsed);
+        } catch {}
+      }
 
       const savedTx = localStorage.getItem("fintech_transactions");
       if (savedTx) setTransactions(JSON.parse(savedTx));
 
       const savedAcc = localStorage.getItem("fintech_accounts");
-      if (savedAcc) setAccounts(JSON.parse(savedAcc));
+      if (savedAcc) {
+        try {
+          const parsedAcc = JSON.parse(savedAcc);
+          if (Array.isArray(parsedAcc) && parsedAcc.length > 0) setAccounts(parsedAcc);
+        } catch {}
+      }
 
       const savedGoals = localStorage.getItem("fintech_goals");
       if (savedGoals) setGoals(JSON.parse(savedGoals));

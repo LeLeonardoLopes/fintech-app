@@ -12,6 +12,18 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        card: {
+          DEFAULT: "var(--card)",
+          foreground: "var(--card-foreground)",
+        },
+        popover: {
+          DEFAULT: "var(--popover)",
+          foreground: "var(--popover-foreground)",
+        },
+        sidebar: {
+          DEFAULT: "var(--sidebar)",
+          border: "var(--sidebar-border)",
+        },
         surface: {
           50: "#fafafa",
           100: "#f4f4f5",

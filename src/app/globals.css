@@ -50,6 +50,15 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
+/* Utilitários essenciais de superfície com opacidade sólida garantida */
+.bg-card {
+  background-color: var(--card);
+}
+
+.text-card-foreground {
+  color: var(--card-foreground);
+}
+
 /* Custom scrollbars (minimal) */
 ::-webkit-scrollbar {
   width: 6px;

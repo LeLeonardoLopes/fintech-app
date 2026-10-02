@@ -47,8 +47,8 @@ export function NewGoalModal({ isOpen, onClose }: NewGoalModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in duration-150">
-      <div className="bg-card border border-border w-full max-w-md rounded-xl shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in duration-150">
+      <div className="bg-white dark:bg-[#121316] border border-border w-full max-w-md rounded-xl shadow-2xl overflow-hidden relative">
         <div className="px-5 py-4 border-b border-border flex items-center justify-between">
           <h2 className="font-semibold text-sm text-foreground">Nova Meta ou Teto</h2>
           <button

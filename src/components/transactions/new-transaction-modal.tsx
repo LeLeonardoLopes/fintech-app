@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, Calendar, Tag, CreditCard, Layers, Repeat, Hash, Plus } from "lucide-react";
 import { useFinance } from "@/context/finance-context";
 import { TransactionType } from "@/lib/types";
@@ -12,8 +12,8 @@ export function NewTransactionModal() {
   const [type, setType] = useState<TransactionType>("expense");
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
-  const [categoryId, setCategoryId] = useState(categories[0]?.id || "");
-  const [accountId, setAccountId] = useState(accounts[0]?.id || "");
+  const [categoryId, setCategoryId] = useState("");
+  const [accountId, setAccountId] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [isRecurring, setIsRecurring] = useState(false);
   const [isInstallment, setIsInstallment] = useState(false);
@@ -21,6 +21,25 @@ export function NewTransactionModal() {
   const [tagsInput, setTagsInput] = useState("");
   const [notes, setNotes] = useState("");
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+
+  // Sincroniza categoria quando tipo muda ou lista é atualizada
+  useEffect(() => {
+    const validCats = categories.filter((c) => c.type === type);
+    if (validCats.length > 0) {
+      if (!categoryId || !validCats.some((c) => c.id === categoryId)) {
+        setCategoryId(validCats[0].id);
+      }
+    }
+  }, [type, categories, categoryId]);
+
+  // Sincroniza conta quando lista de contas é carregada
+  useEffect(() => {
+    if (accounts.length > 0) {
+      if (!accountId || !accounts.some((a) => a.id === accountId)) {
+        setAccountId(accounts[0].id);
+      }
+    }
+  }, [accounts, accountId]);
 
   if (!isNewTxModalOpen) return null;
 
@@ -38,8 +57,8 @@ export function NewTransactionModal() {
       description,
       amount: parsedAmount,
       type,
-      category_id: categoryId,
-      account_id: accountId,
+      category_id: categoryId || (filteredCategories[0]?.id ?? ""),
+      account_id: accountId || (accounts[0]?.id ?? ""),
       date,
       status: "completed",
       is_recurring: isRecurring,
@@ -64,8 +83,8 @@ export function NewTransactionModal() {
   const filteredCategories = categories.filter((c) => c.type === type);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in duration-150">
-      <div className="bg-card border border-border w-full max-w-lg rounded-xl shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in duration-150">
+      <div className="bg-white dark:bg-[#121316] border border-border w-full max-w-lg rounded-xl shadow-2xl overflow-hidden relative">
         {/* Modal Header */}
         <div className="px-5 py-4 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-2">
