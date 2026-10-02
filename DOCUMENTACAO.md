@@ -112,8 +112,8 @@ Em um banco de dados tradicional, se você fizesse uma busca direta, poderia ver
 
 1. **Clone o repositório:**
    ```bash
-   git clone https://github.com/SEU_USUARIO/SEU_REPOSITORIO.git
-   cd App_Financeiro
+   git clone https://github.com/LeLeonardoLopes/fintech-app.git
+   cd fintech-app
    ```
 
 2. **Instale as dependências:**
@@ -165,12 +165,13 @@ git commit -m "feat: lancamento inicial do Fin-Tech com Next.js, Supabase e cate
 4. **Não marque** as opções de criar README ou .gitignore (já temos no projeto).
 5. Clique em **Create repository**.
 
-### 3. Vincular e Enviar os Arquivos
-Execute no terminal da pasta do projeto:
+### 3. Repositório Publicado
+O repositório oficial do projeto está disponível em:
+👉 **[https://github.com/LeLeonardoLopes/fintech-app](https://github.com/LeLeonardoLopes/fintech-app)**
+
+Para enviar futuras alterações após fazer novos commits:
 ```bash
-git branch -M main
-git remote add origin https://github.com/SEU_USUARIO/fintech-app.git
-git push -u origin main
+git push
 ```
 
 ### 4. Conectar o Supabase ao Repositório GitHub
