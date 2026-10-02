@@ -31,41 +31,10 @@ export default function LoginPage() {
   const [fullName, setFullName] = useState("");
   const [cpf, setCpf] = useState("");
   const [cpfError, setCpfError] = useState<string | null>(null);
-  const [consultingCpf, setConsultingCpf] = useState(false);
-  const [cpfQueryResult, setCpfQueryResult] = useState<{
-    nome: string;
-    situacao: string;
-    provedor: string;
-  } | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
-
-  const consultarCpfNaReceita = async (cleanCpf: string) => {
-    setConsultingCpf(true);
-    try {
-      const res = await fetch("/api/cpf/consultar", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cpf: cleanCpf }),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setCpfQueryResult({
-          nome: data.nome,
-          situacao: data.situacao,
-          provedor: data.provedor,
-        });
-        // Auto-preenche o nome se ainda não estiver preenchido pelo usuário
-        setFullName((prev) => (prev.trim() === "" ? data.nome : prev));
-      }
-    } catch (err) {
-      console.error("Falha ao consultar CPF na Receita:", err);
-    } finally {
-      setConsultingCpf(false);
-    }
-  };
 
   const handleCpfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const masked = maskCPF(e.target.value);
@@ -74,13 +43,10 @@ export default function LoginPage() {
     if (clean.length === 11) {
       if (!isValidCPF(clean)) {
         setCpfError("CPF inválido (dígitos verificadores incorretos)");
-        setCpfQueryResult(null);
       } else {
         setCpfError(null);
-        consultarCpfNaReceita(clean);
       }
     } else {
-      setCpfQueryResult(null);
       if (clean.length > 0 && clean.length < 11) {
         setCpfError("CPF incompleto (informe 11 dígitos)");
       } else {
@@ -283,16 +249,11 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit} className="space-y-4 text-xs">
           {mode === "signup" && (
             <>
-              {/* Campo CPF com Consulta Integrada */}
+              {/* Campo CPF com Validação Matemática */}
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <label className="text-neutral-400 font-medium">CPF (Cadastro de Pessoa Física)</label>
-                  {consultingCpf ? (
-                    <span className="text-[10px] text-amber-500 font-medium flex items-center gap-1 animate-pulse">
-                      <Loader2 className="w-3 h-3 animate-spin" />
-                      <span>Consultando Receita...</span>
-                    </span>
-                  ) : cpf.replace(/\D/g, "").length === 11 ? (
+                  {cpf.replace(/\D/g, "").length === 11 && (
                     <span
                       className={`text-[10px] font-medium flex items-center gap-1 ${
                         isValidCPF(cpf) ? "text-emerald-500" : "text-rose-500"
@@ -300,7 +261,7 @@ export default function LoginPage() {
                     >
                       {isValidCPF(cpf) ? "✓ CPF Válido" : "✕ CPF Inválido"}
                     </span>
-                  ) : null}
+                  )}
                 </div>
                 <div className="relative">
                   <ShieldCheck
@@ -335,42 +296,11 @@ export default function LoginPage() {
                     <span>⚠ {cpfError}</span>
                   </p>
                 )}
-
-                {/* Card de Validação Cadastral Oficial da Receita Federal */}
-                {cpfQueryResult && (
-                  <div
-                    data-testid="cpf-cadastral-card"
-                    className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/25 space-y-1 mt-2 text-[11px] animate-in fade-in-50 duration-200"
-                  >
-                    <div className="flex items-center justify-between font-medium">
-                      <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
-                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-                        <span className="font-semibold">Situação: {cpfQueryResult.situacao}</span>
-                      </span>
-                      <span className="text-[9px] uppercase font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-semibold">
-                        Base Federal
-                      </span>
-                    </div>
-                    <p className="text-neutral-600 dark:text-neutral-300 text-[10.5px]">
-                      Titular: <span className="font-semibold text-foreground">{cpfQueryResult.nome}</span>
-                    </p>
-                    <p className="text-[9px] text-neutral-400">
-                      {cpfQueryResult.provedor}
-                    </p>
-                  </div>
-                )}
               </div>
 
-              {/* Nome Completo (auto-preenchido pela consulta) */}
+              {/* Nome Completo */}
               <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="text-neutral-400 font-medium">Nome Completo</label>
-                  {cpfQueryResult && (
-                    <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
-                      ✓ Preenchido via Receita
-                    </span>
-                  )}
-                </div>
+                <label className="text-neutral-400 font-medium block mb-1">Nome Completo</label>
                 <div className="relative">
                   <User className="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2" />
                   <input

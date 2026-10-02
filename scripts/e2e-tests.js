@@ -23,6 +23,14 @@ async function runAllTests() {
   }
 
   try {
+    // Autenticar no modo demonstração para rodar a suíte completa de testes
+    await page.goto("http://localhost:3000/login", { waitUntil: "networkidle" });
+    const demoBtn = page.locator("button:has-text('Continuar no Modo Local / Demonstração')");
+    if (await demoBtn.isVisible()) {
+      await demoBtn.click();
+      await page.waitForTimeout(600);
+    }
+
     // -------------------------------------------------------------
     // TESTE 1: CARREGAMENTO DA PÁGINA PRINCIPAL E ALINHAMENTO
     // -------------------------------------------------------------

@@ -3,6 +3,7 @@ import "./globals.css";
 import { FinanceProvider } from "@/context/finance-context";
 import { Sidebar } from "@/components/layout/sidebar";
 import { NewTransactionModal } from "@/components/transactions/new-transaction-modal";
+import { AuthGuard } from "@/components/layout/auth-guard";
 
 export const metadata: Metadata = {
   title: "Fin-Tech | Gestão Financeira Pessoal Minimalista",
@@ -18,11 +19,13 @@ export default function RootLayout({
     <html lang="pt-BR">
       <body className="font-sans antialiased min-h-screen bg-background text-foreground flex">
         <FinanceProvider>
-          <Sidebar />
-          <div className="flex-1 flex flex-col min-w-0 min-h-screen overflow-y-auto">
-            {children}
-          </div>
-          <NewTransactionModal />
+          <AuthGuard>
+            <Sidebar />
+            <div className="flex-1 flex flex-col min-w-0 min-h-screen overflow-y-auto">
+              {children}
+            </div>
+            <NewTransactionModal />
+          </AuthGuard>
         </FinanceProvider>
       </body>
     </html>

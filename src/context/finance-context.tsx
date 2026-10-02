@@ -20,6 +20,7 @@ const DEFAULT_USER: UserProfile = {
 
 interface FinanceContextType {
   user: UserProfile | null;
+  isAuthLoading: boolean;
   setUser: (user: UserProfile | null) => void;
   logout: () => Promise<void>;
   accounts: Account[];
@@ -44,7 +45,8 @@ interface FinanceContextType {
 const FinanceContext = createContext<FinanceContextType | undefined>(undefined);
 
 export function FinanceProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<UserProfile | null>(DEFAULT_USER);
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [isAuthLoading, setIsAuthLoading] = useState<boolean>(true);
   const [accounts, setAccounts] = useState<Account[]>(initialAccounts);
   const [categories, setCategories] = useState<Category[]>(initialCategories);
   const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
@@ -100,6 +102,9 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
             localStorage.removeItem("fintech_logged_out");
           } catch {}
         }
+        setIsAuthLoading(false);
+      }).catch(() => {
+        setIsAuthLoading(false);
       });
 
       const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
@@ -117,18 +122,21 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
         }
       });
       authSub = subscription;
+    } else {
+      setIsAuthLoading(false);
     }
 
     try {
       const loggedOut = localStorage.getItem("fintech_logged_out");
       const savedUser = localStorage.getItem("fintech_user");
-      if (loggedOut === "true") {
+      if (loggedOut === "true" || !savedUser) {
         setUser(null);
-      } else if (savedUser) {
-        setUser(JSON.parse(savedUser));
       } else {
-        localStorage.setItem("fintech_user", JSON.stringify(DEFAULT_USER));
-        setUser(DEFAULT_USER);
+        try {
+          setUser(JSON.parse(savedUser));
+        } catch {
+          setUser(null);
+        }
       }
 
       const savedCat = localStorage.getItem("fintech_categories");
@@ -361,6 +369,7 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     <FinanceContext.Provider
       value={{
         user,
+        isAuthLoading,
         setUser: handleSetUser,
         logout,
         accounts,

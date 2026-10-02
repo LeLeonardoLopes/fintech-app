@@ -7,8 +7,13 @@ async function runLogoutTest() {
   const page = await context.newPage();
 
   try {
-    // 1. Abrir dashboard
-    await page.goto("http://localhost:3000", { waitUntil: "networkidle" });
+    // 1. Abrir login e entrar no modo demonstração para acessar o dashboard
+    await page.goto("http://localhost:3000/login", { waitUntil: "networkidle" });
+    const demoBtn = page.locator("button:has-text('Continuar no Modo Local / Demonstração')");
+    if (await demoBtn.isVisible()) {
+      await demoBtn.click();
+      await page.waitForTimeout(600);
+    }
     console.log("1. Dashboard carregado.");
 
     // Screenshot com perfil e botão de sair
@@ -48,10 +53,10 @@ async function runLogoutTest() {
     await page.screenshot({ path: "screenshot/screenshot-apos-sair.png" });
 
     // 5. Testar login novamente pelo botão de demonstração
-    const demoBtn = page.locator('button:has-text("Continuar no Modo Local / Demonstração")');
-    if (await demoBtn.isVisible()) {
+    const reDemoBtn = page.locator('button:has-text("Continuar no Modo Local / Demonstração")');
+    if (await reDemoBtn.isVisible()) {
       console.log("5. Clicando para re-entrar no modo demonstração...");
-      await demoBtn.click();
+      await reDemoBtn.click();
       await page.waitForURL("http://localhost:3000/", { timeout: 5000 });
       console.log("5. Re-entrou com sucesso no Dashboard!");
     }

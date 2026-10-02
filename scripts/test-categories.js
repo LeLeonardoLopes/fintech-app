@@ -23,7 +23,15 @@ async function runCategoriesTest() {
   }
 
   try {
-    // 1. Acessar tela de Transações
+    // 1. Acessar tela de login e entrar no modo demonstração para testar
+    await page.goto("http://localhost:3000/login", { waitUntil: "networkidle" });
+    const demoBtn = page.locator("button:has-text('Continuar no Modo Local / Demonstração')");
+    if (await demoBtn.isVisible()) {
+      await demoBtn.click();
+      await page.waitForTimeout(600);
+    }
+
+    // 2. Acessar tela de Transações
     await page.goto("http://localhost:3000/transacoes", { waitUntil: "networkidle" });
     assert(page.url().includes("/transacoes"), "Navegou com sucesso para /transacoes");
 
