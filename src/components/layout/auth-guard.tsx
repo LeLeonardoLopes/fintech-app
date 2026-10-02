@@ -10,16 +10,18 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
 
+  const isPublicRoute = pathname === "/login" || pathname?.startsWith("/auth");
+
   useEffect(() => {
     if (!isAuthLoading) {
-      if (!user && pathname !== "/login") {
+      if (!user && !isPublicRoute) {
         router.replace("/login");
       }
     }
-  }, [user, isAuthLoading, pathname, router]);
+  }, [user, isAuthLoading, pathname, isPublicRoute, router]);
 
-  // Na página de login, renderiza sempre a tela de login
-  if (pathname === "/login") {
+  // Em rotas públicas (login, confirmação de email), renderiza direto
+  if (isPublicRoute) {
     return <>{children}</>;
   }
 

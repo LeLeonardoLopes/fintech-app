@@ -57,7 +57,7 @@ export function Sidebar() {
     }
   };
 
-  if (pathname === "/login") return null;
+  if (pathname === "/login" || pathname?.startsWith("/auth")) return null;
 
   return (
     <aside className="w-64 border-r border-border bg-[var(--sidebar)] flex flex-col justify-between h-screen sticky top-0 select-none">
